@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: devflow
+  # ========== MySQL 数据库 ==========
+  datasource:
+    url: jdbc:mysql://localhost:3306/devflow?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # ========== 自动配置排除：尚未安装的服务先跳过 ==========
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+
+  # ========== Spring AI（DeepSeek API） ==========
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:your-api-key-here}
+      base-url: https://api.deepseek.com/v1
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+
+# ========== JWT 配置 ==========
+jwt:
+  secret: ${JWT_SECRET:devflow-jwt-secret-key-change-in-production}
+  expiration: 86400000  # 24小时
+
+# ========== Knife4j API 文档 ==========
+springdoc:
+  swagger-ui:
+    path: /docs
+  api-docs:
+    path: /v3/api-docs
+
+# ========== 日志 ==========
+logging:
+  level:
+    com.devflow: debug
+    org.springframework.ai: debug
