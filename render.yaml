@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: devflow-demo
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod,render
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_USERNAME
+        value: admin
+      - key: DEMO_PASSWORD
+        value: admin123
+      - key: JAVA_OPTS
+        value: -Xms128m -Xmx320m -XX:+UseG1GC -XX:MaxMetaspaceSize=128m

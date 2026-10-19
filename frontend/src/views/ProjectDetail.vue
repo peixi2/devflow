@@ -121,8 +121,8 @@ const loadStandup = async () => {
   const res = await api.standup(route.params.id)
   standup.value = res.data; activeTab.value = 'ai'; standupLoading.value = false
 }
-const startSprint = async (sid) => { await api.startSprint(sid); load() }
-const completeSprint = async (sid) => { /* use transition */ }
+const startSprint = async (sid) => { await api.startSprint(route.params.id, sid); load() }
+const completeSprint = async (sid) => { await api.completeSprint(route.params.id, sid); load() }
 const typeColor = (t) => ({BUG:'danger',FEATURE:'success',TASK:'',IMPROVEMENT:'warning'}[t]||'')
 const priColor = (p) => ({HIGHEST:'danger',HIGH:'warning',MEDIUM:'',LOW:'info',LOWEST:'info'}[p]||'')
 </script>

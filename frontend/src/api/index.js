@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const api = axios.create({ baseURL: '/api' })
 
@@ -24,7 +25,8 @@ export default {
   // Sprints
   listSprints: (pid) => api.get(`/projects/${pid}/sprints`),
   createSprint: (pid, data) => api.post(`/projects/${pid}/sprints`, data),
-  startSprint: (sid) => api.put(`/projects/0/sprints/${sid}/start`),
+  startSprint: (pid, sid) => api.put(`/projects/${pid}/sprints/${sid}/start`),
+  completeSprint: (pid, sid) => api.put(`/projects/${pid}/sprints/${sid}/complete`),
   // Issues
   listIssues: (pid, params) => api.get(`/projects/${pid}/issues`, { params }),
   getIssue: (pid, id) => api.get(`/projects/${pid}/issues/${id}`),

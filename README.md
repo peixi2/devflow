@@ -15,7 +15,7 @@ DevFlow 是一个**AI增强的软件项目管理工具**，在传统 Issue 追�
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    Nginx :80                        │
+│             Caddy :80/:443 + 自动 HTTPS             │
 │              Vue3 + Element Plus                    │
 └────────────────────────┬────────────────────────────┘
                          │ REST API + JWT
@@ -51,7 +51,7 @@ DevFlow 是一个**AI增强的软件项目管理工具**，在传统 Issue 追�
 | **AI** | DeepSeek API (OpenAI兼容) | 3个AI智能功能 |
 | **前端** | Vue3 + Element Plus + Vite | SPA单页应用 |
 | **文档** | Knife4j / Swagger | 接口文档自动生成 |
-| **部署** | Docker Compose | 一键部署 |
+| **部署** | Docker Compose + Caddy | 一键部署 + 自动 HTTPS |
 
 ---
 
@@ -122,7 +122,7 @@ GET    /api/notifications              通知列表
 - JDK 21+
 - MySQL 8.0
 - Maven 3.9+
-- Node.js 18+
+- Node.js 20.19+ 或 22.12+
 
 ### 启动步骤
 
@@ -140,7 +140,7 @@ cd devflow/frontend && npm install && npm run dev
 # 4. 访问
 # 前端: http://localhost:3000
 # API文档: http://localhost:8080/docs
-# 测试账号: admin / admin123
+# 首次使用: 在登录页注册账号
 ```
 
 ### 一键打包（前端+后端合并）
@@ -152,14 +152,89 @@ cd .. && mvn clean package -DskipTests
 # 一个 devflow-1.0.0.jar 包含全部，java -jar 直接跑
 ```
 
+### Docker 本地验证
+
+```bash
+cp .env.example .env
+# 修改 .env 中的数据库密码、JWT 密钥和演示账号密码
+docker compose up -d --build
+docker compose ps
+```
+
+默认访问 `http://localhost`。停止服务但保留数据库数据：
+
+```bash
+docker compose down
+```
+
+### 服务器 + 域名部署
+
+服务器要求：Linux x86_64/arm64、Docker Engine 24+、Docker Compose v2，推荐 2 核 4 GB 内存。
+
+1. 在域名服务商处添加一条 A 记录，将演示子域名指向服务器公网 IP。
+2. 在服务器安全组中开放 TCP 80、TCP 443 和 UDP 443；不要开放 MySQL 3306。
+3. 克隆仓库并创建生产环境变量：
+
+```bash
+git clone https://github.com/peixi2/devflow.git
+cd devflow
+cp .env.example .env
+```
+
+4. 编辑 `.env`：
+
+```dotenv
+SITE_ADDRESS=devflow.example.com
+MYSQL_PASSWORD=<随机数据库密码>
+MYSQL_ROOT_PASSWORD=<另一个随机数据库密码>
+JWT_SECRET=<至少32字符的随机密钥>
+DEMO_USERNAME=admin
+DEMO_PASSWORD=<演示账号密码>
+DEEPSEEK_API_KEY=<DeepSeek API Key>
+```
+
+5. 启动并检查：
+
+```bash
+chmod +x scripts/*.sh
+./scripts/deploy.sh
+curl https://devflow.example.com/health
+```
+
+Caddy 会在 DNS 生效且 80/443 可访问后自动申请和续签 HTTPS 证书。更新版本时执行：
+
+```bash
+git pull --ff-only
+./scripts/deploy.sh
+```
+
+数据库备份：
+
+```bash
+./scripts/backup.sh
+```
+
+生产环境默认关闭公开注册，并在数据库为空时创建演示账号、示例项目、Sprint 和 Issue。所有密钥只保存在服务器 `.env` 中，该文件已被 Git 忽略。
+
+### 免费 Render 演示部署
+
+仓库根目录的 `render.yaml` 可以创建免费的 Render Web Service，并自动获得固定的
+`*.onrender.com` HTTPS 地址。该部署使用 H2 内存数据库，实例休眠或重启后会自动恢复演示数据。
+
+1. 登录 Render 并连接此 GitHub 仓库。
+2. 选择 **New > Blueprint**，然后选择 `devflow` 仓库。
+3. 确认使用 Free 计划并创建服务。
+
+免费实例闲置 15 分钟后会休眠，首次访问的唤醒时间约为一分钟。演示账号默认为
+`admin` / `admin123`。如需启用 AI，在 Render 环境变量中设置 `DEEPSEEK_API_KEY`。
+
 ---
 
 ## 🧪 测试数据
 
 | 账户 | 密码 | 角色 |
 |------|------|------|
-| admin | admin123 | 管理员 |
-| dev01 | dev123 | 开发者 |
+| `.env` 中的 `DEMO_USERNAME` | `.env` 中的 `DEMO_PASSWORD` | 演示账号 |
 
 ---
 

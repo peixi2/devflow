@@ -1,28 +1,27 @@
 server:
-  port: 8080
+  port: ${PORT:${SERVER_PORT:8080}}
+  forward-headers-strategy: framework
 
 spring:
   application:
     name: devflow
   # ========== MySQL 数据库 ==========
   datasource:
-    url: jdbc:mysql://localhost:3306/devflow?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    url: ${DB_URL:jdbc:mysql://localhost:3306/devflow?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 1234
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: ${JPA_SHOW_SQL:true}
     properties:
       hibernate:
         format_sql: true
-
-  # ========== 自动配置排除：尚未安装的服务先跳过 ==========
   autoconfigure:
     exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
   # ========== Spring AI（DeepSeek API） ==========
   ai:
@@ -38,6 +37,15 @@ spring:
 jwt:
   secret: ${JWT_SECRET:devflow-jwt-secret-key-change-in-production}
   expiration: 86400000  # 24小时
+
+app:
+  registration-enabled: ${REGISTRATION_ENABLED:true}
+  demo:
+    seed-enabled: ${DEMO_SEED_ENABLED:false}
+    username: ${DEMO_USERNAME:admin}
+    password: ${DEMO_PASSWORD:admin123}
+  ai:
+    rate-limit-per-minute: ${AI_RATE_LIMIT_PER_MINUTE:10}
 
 # ========== Knife4j API 文档 ==========
 springdoc:

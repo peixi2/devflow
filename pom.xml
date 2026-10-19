@@ -19,10 +19,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <knife4j.version>4.5.0</knife4j.version>
         <jjwt.version>0.12.5</jjwt.version>
-        <spring-ai.version>1.0.0-M4</spring-ai.version>
     </properties>
 
     <dependencies>
@@ -46,22 +44,10 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- MyBatis-Plus -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-
-        <!-- 缓存 & 消息队列 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- 安全 -->
@@ -85,13 +71,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- AI: Spring AI + OpenAI-compatible (接DeepSeek) -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-            <version>${spring-ai.version}</version>
         </dependency>
 
         <!-- 工具 -->
@@ -118,15 +97,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <!-- Spring AI 的 Milestone 仓库 -->
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
