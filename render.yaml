@@ -11,6 +11,12 @@ services:
         value: prod,render
       - key: JWT_SECRET
         generateValue: true
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
       - key: DEMO_USERNAME
         value: admin
       - key: DEMO_PASSWORD

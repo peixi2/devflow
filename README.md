@@ -219,11 +219,18 @@ git pull --ff-only
 ### 免费 Render 演示部署
 
 仓库根目录的 `render.yaml` 可以创建免费的 Render Web Service，并自动获得固定的
-`*.onrender.com` HTTPS 地址。该部署使用 H2 内存数据库，实例休眠或重启后会自动恢复演示数据。
+`*.onrender.com` HTTPS 地址。应用连接独立的云 MySQL，Render 实例休眠或重启不会清空数据。
 
-1. 登录 Render 并连接此 GitHub 仓库。
-2. 选择 **New > Blueprint**，然后选择 `devflow` 仓库。
-3. 确认使用 Free 计划并创建服务。
+1. 创建云 MySQL 数据库，并取得主机、端口、数据库名、用户名和密码。
+2. 登录 Render 并连接此 GitHub 仓库。
+3. 选择 **New > Blueprint**，然后选择 `devflow` 仓库。
+4. 确认使用 Free 计划，并填写 `DB_URL`、`DB_USERNAME`、`DB_PASSWORD`。
+
+`DB_URL` 使用 JDBC 格式，例如：
+
+```text
+jdbc:mysql://mysql.example.com:12345/defaultdb?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&sslMode=REQUIRED
+```
 
 免费实例闲置 15 分钟后会休眠，首次访问的唤醒时间约为一分钟。演示账号默认为
 `admin` / `admin123`。如需启用 AI，在 Render 环境变量中设置 `DEEPSEEK_API_KEY`。
